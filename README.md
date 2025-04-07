@@ -1,12 +1,34 @@
 # Introduction
 
-[vCons][draft-vcon] are powerful means of capturing and collaborating on the details of human conversations.
+[vCons][draft-vcon] are powerful means of capturing and collaborating on the details of human conversations,
+built to travel. 
 They feed AI systems, enable entities to respond more accurately to customer needs, and manage the health of their business more effectively.
 The vCon working group is about passing conversational data, such as data commonly generated and collected in business and security environments, from chat logs to transcripts to recordings. 
 Most systems provide a way to store such information, but there are few standards or interoperability within the storage or transmission mechanisms.
 [vcon] is a framework for capturing and collaborating on the details of a Virtual Conversation, feeding AI systems, and enabling entities to respond to customer needs more accurately and manage their business's health more effectively.
 The two opposing forces influencing such information passing are trying to enforce personal data privacy and providing the ability and interest to use conversations in various ways, e.g.,  AI analysis.  
 
+Although vCons are tools that enable actors to do the right thing, they are not tools that enable actors in a distributed system to prove it.
+However, when combined with the SCITT protocol, proof becomes practical.
+SCITT allows Relying Parties to obtain information pertinent to the lifecycle of a vCon in a "transparent" way.
+SCITT achieves this by having producers publish information in a Transparency Service, where Relying Parties can check the information.
+These relying parties can then use this information to make decisions based on the current state and context of the vCon to account for changes in consent, updates in the accuracy of the content, or amendments of the information it might contain.
+SCITT, the Supply Chain, Integrity, Transparency, and Trust protocol, enables clients to register statements about events, physical or virtual, such as when things are created or used.
+These statements are immutable and are useful to support auditing, governance, and coordination between various distributed systems. 
+
+When using vCons to define a conversation, and SCITT to record the events that occur to them, more scalable and transparent systems of governanace and provenance can be constructed to support privacy efforts.  It is expected that there are many situations where this governance
+across security boundaries is common and desired by all parties. One real-world example of this is management of consent as it applies to conversations and machine learning.  Using conversations as inputs to machine learning has great benefit to both customers and businesses, yet only responsibly within the defense of personal data rights and compliance to regulations, united together by consent.  Other use cases exist for bias detection and deep fake protection, and are expected to have significant overlaps with regards to system structure and interactions, and both semantic and syntactic definitions. 
+
+In all of these cases, the ability to define and express the processing of conversations depends on the ability to authoritatively define the lifecycle of a vCon: 
+- who originated the vCon in the first place to establish provenance
+- how it was analyzed and amended, to accurately respond to right-to-know requests
+- the authenticity both of the original document for downstream workflow 
+- and authenticity of the redactions that come from the original, in service of data minimization efforts. 
+- the various expressions of digital rights
+- the sharing or deletion in response to the same digital rights.
+
+
+For this document and for purposes of illustration, consent will be used as an example.
 Proper consent management is fundamental to the responsible protection of data and the ability to leverage that data.
 Consent granted by the data subject of a vCon also needs to be stored and passed, exactly like the other information contained in a vCon.
 Unlike the rest of the information contained, the gathered consent is expressly not immutable.
@@ -15,25 +37,17 @@ Multiple regulations, including the US-born [California Consumer Protection Act 
 Consent, although illustrative, is not the only example of mutability in the lifecycle of a vCon.
 Verification of parties, improvements in the analysis, and additions of contextual attachments result in updates to a vCon after data is shared, begging for a mechanism to track and govern such changes.
 
-Moreover, the vCon is properly understood within the context of consent.
+Moreover, supportive of consent as an effective use case, the vCon is properly understood within the context of consent of which it exists.
 That is, the times and places vCons are created are vast, ranging from consumer-facing organizations to regulated industries and security applications.
 In each case, these conversations are collected under regulation and legal compliance.
 Those who use vCons generally assume the requirement to prove and assure the proper governance of the conversation; other uses are considered out of scope.
 The fundamental goal of vCons is to define a conversation precisely so that third-party tools and organizations can properly protect and support the digital rights of those recorded.
 In plain terms, vCons are a tool to enable good actors to "do the right thing" and prove it at scale.
-Except for the implications their absence may imply, vCons do not detect actors unconcerned with the proper protection of personal data.   
+Except for the implications the absence of such responsible approaches may imply, vCons do not detect actors unconcerned with the proper protection of personal data.   
 
-Although vCons are a tools that enable actors to do the right thing, they are not tools that enable actors in a distributed system to prove it.
-However, when combined with the SCITT protocol, proof becomes practical.
-SCITT allows Relying Parties to obtain information pertinent to the lifecycle of a vCon in a "transparent" way.
-SCITT achieves this by having producers publish information in a Transparency Service, where Relying Parties can check the information.
-These relying parties can then use this information to make decisions based on the current state and context of the vCon to account for changes in consent, updates in the accuracy of the content, or amendments of the information it might contain.
-SCITT, the Supply Chain, Integrity, Transparency, and Trust protocol, enables clients to register statements about events, physical or virtual, such as when things are created or used.
-These statements are immutable and are useful to support auditing, governance, and coordination between various distributed systems. 
 
-This draft provides an overview of the requirements and a workflow for onboarding customers with end-to-end, interoperable services and tooling, which honors the working group's charter to pass conversational data safely between consenting parties.
-The workflow enables entities in the workflow to collaborate on a vCon while assuring all entities in the workflow adhere to relevant PII regulations using a [Supply Chain, Integrity, Transparency and Trust (SCITT)][draft-scitt] Ledger.
-Actual implementations of these workflows are left to implementers and applications; this draft provides an authoritative list of the entries that should appear on the SCITT transparency ledger to enable them. 
+
+To honor the working group's charter to pass conversational data safely between consenting parties, this draft provides an overview of the requirements, a workflow and an example consent structure for using SCITT to manage the vCon lifecycle at scale, providing and end-to-end, interoperable services and tooling.  The workflow enables entities in the workflow to collaborate on a vCon while assuring all entities in the workflow adhere to relevant PII regulations using a [Supply Chain, Integrity, Transparency and Trust (SCITT)][draft-scitt] Ledger. Actual implementations of these workflows are left to implementers and applications; this draft provides an authoritative list of the entries that should appear on the SCITT transparency ledger to enable them. 
   
 
 ## Conventions and Definitions
@@ -62,10 +76,20 @@ An entity may be a Data Originator, Data Controller, Data Processor or some othe
 
 
 
-# Example Use Cases
+# vCon Lifecyle
+
+## Example Use Case: Consent Management
+
+The example use case, consent management, has the following requirements, all considered necessary to fulfill the proper sharing of personal information responsibly:
+- As an individual, I wish to express my data subject rights to express my consent for  various purposes, and to withdraw the same.
+- As a member of an organization, I want to operationally assure that the processing of personal data is within the consent I gained from the data subject, and to safely record those activities to provide to both data subjects and governance bodies.
+- As a regulator, I wish to have an measurement system to support compliance, bias and regulatory enforcement of policy.
+- As a technologist, I wish to maintain the integrity of conversational pipelines, maintaining the trust both stakeholders and data subjects have in the trust and transparency of the process. 
 
 
-## vCon Lifecycle: Creation, Distribution and Deletion
+## vCon Lifecycle Scope
+
+### Creation, Distribution and Deletion
 
 The vCon lifecycle is a series of phases that occur in the life of a vCon, from creation through distribution to deletion.
 Tracking these phases aids in enabling fundamental privacy rights, such as the right to know how your data was processed ("Right to Know"), and secures AI supply chains by establishing provenance and guaranteeing integrity.  
@@ -80,7 +104,8 @@ The phases of a vCons life include:
 6. **vConSentToProcessors**: The Data Controller sends the vCon to relevant Data Processors.
 7. **Data Processing**: Value-added services are performed on the vCon data.
 8. **vConDeletion**: The vCon is deleted when no longer needed, when consent is revoked, or when it expires.
-## Digital Rights Management
+
+### Digital Rights Management
 
 Interwoven with the vCon lifecycle is the management of consent that applies to the vCon.
 In this case, a more modern idea of consent is imagined: consent is gathered by the data controller, for a particular purpose such a training or sharing, that can be withdrawn by the data subject on demand.
@@ -97,7 +122,7 @@ Lifecycle events in Digital Rights Management include:
 6. **RevokeRequestProcessing**: If consent is revoked, the request is processed and communicated to all parties.
 
 
-## Ammendment of Existing vCons
+### Ammendment of Existing vCons
 
 Under normal circumstances, vCons may be amended.
 For example, at the time of creation, the parties to a vCon may be verified by a number of existing methods such as OAuth.
@@ -112,12 +137,12 @@ Events that may be recorded on the distributed ledger include:
 3. **Data Redaction**: Data Processors delete the data or redact the Data Subject.
 
 
-# Detailed Use Case: vCon Lifecycle
+# Detailed Use Case
 
-As a illustration, let's look at the lifecycle of a vCon, from creation for deletion. 
+As a illustration, let's look at the lifecycle of a vCon, from creation for deletion, in the context of the expression of digital rights. 
 
 
-### vCon Create, Consent and Share
+## vCon Create, Consent and Share
 
 <img src="./media/vcon-lifecycle.svg" alt="vCon Lifecycle" style="height: 300px;"/>
 
